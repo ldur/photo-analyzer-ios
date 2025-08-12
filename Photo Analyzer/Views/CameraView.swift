@@ -3,7 +3,7 @@
 //  Photo Analyzer
 //
 //  Created by Lasse Durucz on 12/08/2025.
-//
+// Lasse er pen
 
 import SwiftUI
 import AVFoundation
