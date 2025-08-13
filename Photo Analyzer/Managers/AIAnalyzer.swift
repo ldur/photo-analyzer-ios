@@ -197,15 +197,23 @@ class AIAnalyzer: ObservableObject {
     private let faceDetectionRequest = VNDetectFaceLandmarksRequest()
     private let textRecognitionRequest = VNRecognizeTextRequest()
     
-    // Advanced Object Detector
-    private let advancedObjectDetector = AdvancedObjectDetector()
+    // Professional Object Detector
+    private let professionalObjectDetector = ProfessionalObjectDetector()
+    
+    // Food Detection Enhancer
+    private let foodDetectionEnhancer = FoodDetectionEnhancer()
     
     // Core ML Models (if available)
     private var objectDetectionModel: VNCoreMLModel?
     
+    // Performance optimization
+    private let processingQueue = DispatchQueue(label: "ai.analysis", qos: .userInitiated)
+    private var modelCache: [String: VNCoreMLModel] = [:]
+    
     init() {
         setupRequests()
         setupCoreMLModels()
+        optimizeForDevice()
     }
     
     private func setupRequests() {
@@ -217,17 +225,45 @@ class AIAnalyzer: ObservableObject {
     }
     
     private func setupCoreMLModels() {
-        // Try to load built-in object detection models
-        if let modelURL = Bundle.main.url(forResource: "YOLOv3", withExtension: "mlmodelc") {
-            do {
-                let model = try MLModel(contentsOf: modelURL)
-                objectDetectionModel = try VNCoreMLModel(for: model)
-            } catch {
-                print("Failed to load YOLOv3 model: \(error)")
+        // Try to load optimized models first
+        let modelNames = ["YOLOv8n_optimized", "YOLOv8n", "YOLOv3"]
+        
+        for modelName in modelNames {
+            if let modelURL = Bundle.main.url(forResource: modelName, withExtension: "mlmodelc") {
+                do {
+                    let model = try MLModel(contentsOf: modelURL)
+                    let coreMLModel = try VNCoreMLModel(for: model)
+                    
+                    // Configure for optimal performance
+                    // Note: VNCoreMLModel automatically uses the best available compute units
+                    
+                    objectDetectionModel = coreMLModel
+                    modelCache[modelName] = coreMLModel
+                    print("✅ Loaded optimized model: \(modelName)")
+                    break
+                } catch {
+                    print("Failed to load \(modelName): \(error)")
+                    continue
+                }
             }
         }
         
         // If no custom model, we'll use enhanced Vision framework
+    }
+    
+    private func optimizeForDevice() {
+        // Configure requests for optimal performance
+        // Note: usesCPUOnly is deprecated, Vision framework automatically optimizes
+        
+        // Enable revision-specific optimizations
+        textRecognitionRequest.revision = VNRecognizeTextRequestRevision3
+        faceDetectionRequest.revision = VNDetectFaceLandmarksRequestRevision3
+        
+        // Optimize for mobile performance
+        if ProcessInfo.processInfo.thermalState != .nominal {
+            // Reduce quality for thermal management
+            textRecognitionRequest.recognitionLevel = .fast
+        }
     }
     
     func analyzePhoto(_ image: UIImage, completion: @escaping (AnalysisResult?) -> Void) {
@@ -263,16 +299,24 @@ class AIAnalyzer: ObservableObject {
                 
                 let enhancedObjects = try await self.performAdvancedObjectDetection(image: image)
                 
+                // Step 2.5: Food-specific detection enhancement
+                await MainActor.run {
+                    self.analysisProgress = 0.65
+                }
+                
+                let foodDetections = await self.performFoodDetectionEnhancement(image: image)
+                let allEnhancedObjects = enhancedObjects + foodDetections
+                
                 // Step 3: Scene understanding
                 await MainActor.run {
                     self.analysisProgress = 0.8
                 }
                 
-                let sceneAnalysis = self.performSceneAnalysis(image: image)
+                _ = self.performSceneAnalysis(image: image)
                 
                 // Combine results
                 let processingTime = Date().timeIntervalSince(startTime)
-                let allObjects = basicResults.objects + enhancedObjects
+                let allObjects = basicResults.objects + allEnhancedObjects
                 
                 let overallConfidence = self.calculateOverallConfidence(
                     labels: basicResults.labels,
@@ -328,7 +372,15 @@ class AIAnalyzer: ObservableObject {
     
     private func performAdvancedObjectDetection(image: UIImage) async throws -> [DetectedObject] {
         return await withCheckedContinuation { continuation in
-            advancedObjectDetector.detectObjects(in: image) { objects in
+            professionalObjectDetector.detectObjects(in: image) { objects in
+                continuation.resume(returning: objects)
+            }
+        }
+    }
+    
+    private func performFoodDetectionEnhancement(image: UIImage) async -> [DetectedObject] {
+        return await withCheckedContinuation { continuation in
+            foodDetectionEnhancer.enhanceFoodDetection(in: image) { objects in
                 continuation.resume(returning: objects)
             }
         }

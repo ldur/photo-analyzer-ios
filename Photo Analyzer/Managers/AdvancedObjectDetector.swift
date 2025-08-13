@@ -331,6 +331,8 @@ enum ObjectCategory: String, CaseIterable {
     case chair = "chair"
     case screen = "screen"
     case document = "document"
+    case food = "food"
+    case other = "other"
     
     var displayName: String {
         switch self {
@@ -342,6 +344,8 @@ enum ObjectCategory: String, CaseIterable {
         case .chair: return "Chair"
         case .screen: return "Screen"
         case .document: return "Document"
+        case .food: return "Food"
+        case .other: return "Other"
         }
     }
     
@@ -355,6 +359,8 @@ enum ObjectCategory: String, CaseIterable {
         case .chair: return 0.5
         case .screen: return 0.7
         case .document: return 0.6
+        case .food: return 0.8  // Higher threshold for food items
+        case .other: return 0.4
         }
     }
 }

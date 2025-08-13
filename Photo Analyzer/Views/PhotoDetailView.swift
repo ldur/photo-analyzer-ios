@@ -214,7 +214,7 @@ struct PhotoDetailView: View {
                     }
                 }
                 .sheet(isPresented: $showingModelManagement) {
-                    ModelManagementView()
+                    EnhancedModelManagementView()
                 }
     }
     

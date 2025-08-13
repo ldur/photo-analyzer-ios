@@ -11,7 +11,9 @@ class ModelDownloader: ObservableObject {
     private let modelURLs: [String: String] = [
         "YOLOv3": "https://developer.apple.com/machine-learning/models/text/YOLOv3.mlmodel",
         "ResNet50": "https://developer.apple.com/machine-learning/models/image/ResNet50.mlmodel",
-        "MobileNetV2": "https://developer.apple.com/machine-learning/models/image/MobileNetV2.mlmodel"
+        "MobileNetV2": "https://developer.apple.com/machine-learning/models/image/MobileNetV2.mlmodel",
+        "Food101": "https://ml-assets.apple.com/coreml/models/Image/ImageClassification/Food101/Food101.mlmodel",
+        "ImageNet": "https://ml-assets.apple.com/coreml/models/Image/ImageClassification/ImageNet/ImageNet.mlmodel"
     ]
     
     struct MLModelInfo {
@@ -48,6 +50,20 @@ class ModelDownloader: ObservableObject {
                 size: "~15MB",
                 url: modelURLs["MobileNetV2"] ?? "",
                 isDownloaded: isModelDownloaded("MobileNetV2")
+            ),
+            MLModelInfo(
+                name: "Food101",
+                description: "Specialized food classification model for 101 food categories",
+                size: "~50MB",
+                url: modelURLs["Food101"] ?? "",
+                isDownloaded: isModelDownloaded("Food101")
+            ),
+            MLModelInfo(
+                name: "ImageNet",
+                description: "Comprehensive image classification with 1000+ categories",
+                size: "~150MB",
+                url: modelURLs["ImageNet"] ?? "",
+                isDownloaded: isModelDownloaded("ImageNet")
             )
         ]
     }
