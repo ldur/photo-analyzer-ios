@@ -13,10 +13,12 @@ struct PhotoDetailView: View {
     @ObservedObject var photoManager: PhotoManager
     @StateObject private var aiAnalyzer = AIAnalyzer()
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @State private var fullImage: UIImage?
     @State private var isLoading = true
     @State private var showingAnalysisResults = false
-    @State private var showingModelManagement = false
+
+    @State private var showingDeleteConfirmation = false
     
     var body: some View {
         ZStack {
@@ -37,6 +39,17 @@ struct PhotoDetailView: View {
                     }
                     
                     Spacer()
+                    
+                    Button(action: {
+                        showingDeleteConfirmation = true
+                    }) {
+                        Image(systemName: "trash")
+                            .font(.title2)
+                            .foregroundColor(.red)
+                            .padding(12)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
                     
                     if photo.isAnalyzed {
                         Button(action: {
@@ -147,20 +160,7 @@ struct PhotoDetailView: View {
                                     .cornerRadius(25)
                                 }
                                 
-                                Button(action: {
-                                    showingModelManagement = true
-                                }) {
-                                    HStack {
-                                        Image(systemName: "brain.head.profile")
-                                        Text("Manage AI Models")
-                                    }
-                                    .font(.subheadline)
-                                    .foregroundColor(.cyan)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 8)
-                                    .background(Color.cyan.opacity(0.2))
-                                    .cornerRadius(15)
-                                }
+
                             }
                             }
                         }
@@ -194,6 +194,22 @@ struct PhotoDetailView: View {
                                     .background(Color.white.opacity(0.2))
                                     .cornerRadius(15)
                             }
+                            
+                            // Re-analyze button for testing
+                            Button(action: {
+                                reAnalyzePhoto()
+                            }) {
+                                HStack {
+                                    Image(systemName: "arrow.clockwise")
+                                    Text("Re-analyze Photo")
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(Color.orange.opacity(0.7))
+                                .cornerRadius(15)
+                            }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
@@ -213,8 +229,14 @@ struct PhotoDetailView: View {
                         AnalysisResultsView(analysisResult: result)
                     }
                 }
-                .sheet(isPresented: $showingModelManagement) {
-                    EnhancedModelManagementView()
+
+                .alert("Delete Photo", isPresented: $showingDeleteConfirmation) {
+                    Button("Delete", role: .destructive) {
+                        deletePhoto()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("Are you sure you want to delete this photo? This action cannot be undone.")
                 }
     }
     
@@ -241,6 +263,40 @@ struct PhotoDetailView: View {
         aiAnalyzer.analyzePhoto(image) { result in
             if let result = result {
                 photo.setAnalysisResult(result)
+            }
+        }
+    }
+    
+    private func reAnalyzePhoto() {
+        guard let image = fullImage else { return }
+        
+        // Force a fresh analysis
+        photo.isAnalyzed = false
+        photo.analysisResult = nil
+        
+        aiAnalyzer.analyzePhoto(image) { result in
+            if let result = result {
+                photo.setAnalysisResult(result)
+            }
+        }
+    }
+    
+    private func deletePhoto() {
+        Task {
+            let success = await photoManager.deletePhoto(with: photo.assetIdentifier)
+            
+            await MainActor.run {
+                if success {
+                    // Remove from SwiftData
+                    modelContext.delete(photo)
+                    try? modelContext.save()
+                    
+                    // Dismiss the view
+                    dismiss()
+                    print("✅ Successfully deleted photo")
+                } else {
+                    print("❌ Failed to delete photo")
+                }
             }
         }
     }

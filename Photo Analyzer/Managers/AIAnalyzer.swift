@@ -197,11 +197,8 @@ class AIAnalyzer: ObservableObject {
     private let faceDetectionRequest = VNDetectFaceLandmarksRequest()
     private let textRecognitionRequest = VNRecognizeTextRequest()
     
-    // Professional Object Detector
-    private let professionalObjectDetector = ProfessionalObjectDetector()
-    
-    // Food Detection Enhancer
-    private let foodDetectionEnhancer = FoodDetectionEnhancer()
+    // Simplified Object Detector
+    private let simplifiedObjectDetector = SimplifiedObjectDetector()
     
     // Core ML Models (if available)
     private var objectDetectionModel: VNCoreMLModel?
@@ -226,7 +223,7 @@ class AIAnalyzer: ObservableObject {
     
     private func setupCoreMLModels() {
         // Try to load optimized models first
-        let modelNames = ["YOLOv8n_optimized", "YOLOv8n", "YOLOv3"]
+        let modelNames = ["YOLOv8x"]
         
         for modelName in modelNames {
             if let modelURL = Bundle.main.url(forResource: modelName, withExtension: "mlmodelc") {
@@ -297,15 +294,7 @@ class AIAnalyzer: ObservableObject {
                     self.analysisProgress = 0.5
                 }
                 
-                let enhancedObjects = try await self.performAdvancedObjectDetection(image: image)
-                
-                // Step 2.5: Food-specific detection enhancement
-                await MainActor.run {
-                    self.analysisProgress = 0.65
-                }
-                
-                let foodDetections = await self.performFoodDetectionEnhancement(image: image)
-                let allEnhancedObjects = enhancedObjects + foodDetections
+                let detectedObjects = try await self.performSimplifiedObjectDetection(image: image)
                 
                 // Step 3: Scene understanding
                 await MainActor.run {
@@ -316,7 +305,7 @@ class AIAnalyzer: ObservableObject {
                 
                 // Combine results
                 let processingTime = Date().timeIntervalSince(startTime)
-                let allObjects = basicResults.objects + allEnhancedObjects
+                let allObjects = basicResults.objects + detectedObjects
                 
                 let overallConfidence = self.calculateOverallConfidence(
                     labels: basicResults.labels,
@@ -370,17 +359,9 @@ class AIAnalyzer: ObservableObject {
         return (labels: labels, objects: objects, faces: faces, text: text)
     }
     
-    private func performAdvancedObjectDetection(image: UIImage) async throws -> [DetectedObject] {
+    private func performSimplifiedObjectDetection(image: UIImage) async throws -> [DetectedObject] {
         return await withCheckedContinuation { continuation in
-            professionalObjectDetector.detectObjects(in: image) { objects in
-                continuation.resume(returning: objects)
-            }
-        }
-    }
-    
-    private func performFoodDetectionEnhancement(image: UIImage) async -> [DetectedObject] {
-        return await withCheckedContinuation { continuation in
-            foodDetectionEnhancer.enhanceFoodDetection(in: image) { objects in
+            simplifiedObjectDetector.detectObjects(in: image) { objects in
                 continuation.resume(returning: objects)
             }
         }

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6A3A46152E4F153700B5871F /* yolov8x 2.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 6A3A46142E4F153700B5871F /* yolov8x 2.mlpackage */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		6A3A45252E4B54B900B5871F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +31,7 @@
 		6A3A45152E4B54B800B5871F /* Photo Analyzer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Photo Analyzer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A3A45242E4B54B900B5871F /* Photo AnalyzerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Photo AnalyzerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A3A452E2E4B54B900B5871F /* Photo AnalyzerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Photo AnalyzerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A3A46142E4F153700B5871F /* yolov8x 2.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = "yolov8x 2.mlpackage"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -79,6 +84,7 @@
 				6A3A45272E4B54B900B5871F /* Photo AnalyzerTests */,
 				6A3A45312E4B54B900B5871F /* Photo AnalyzerUITests */,
 				6A3A45162E4B54B800B5871F /* Products */,
+				6A3A46142E4F153700B5871F /* yolov8x 2.mlpackage */,
 			);
 			sourceTree = "<group>";
 		};
@@ -236,6 +242,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A3A46152E4F153700B5871F /* yolov8x 2.mlpackage in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

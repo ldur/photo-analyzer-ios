@@ -49,7 +49,7 @@ class ProfessionalObjectDetector: ObservableObject {
     
     private func setupModels() {
         // Try to load YOLO model
-        if let modelURL = Bundle.main.url(forResource: "YOLOv8n", withExtension: "mlmodelc") {
+        if let modelURL = Bundle.main.url(forResource: "YOLOv8x", withExtension: "mlmodelc") {
             do {
                 let model = try MLModel(contentsOf: modelURL)
                 yoloModel = try VNCoreMLModel(for: model)

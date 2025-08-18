@@ -27,18 +27,33 @@ struct PhotoThumbnailView: View {
                     )
             }
             
-            // Analysis status indicator
-            if photo.isAnalyzed {
-                VStack {
-                    HStack {
-                        Spacer()
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                            .background(Circle().fill(Color.white))
-                            .padding(8)
-                    }
+            // Status indicators
+            VStack {
+                HStack {
                     Spacer()
+                    
+                    // Show both labeled and analyzed indicators if both are present
+                    HStack(spacing: 4) {
+                        // Labeled indicator (priority symbol)
+                        if photo.hasLabels {
+                            Image(systemName: "tag.fill")
+                                .foregroundColor(.orange)
+                                .background(Circle().fill(Color.white))
+                                .font(.caption)
+                                .padding(6)
+                        }
+                        
+                        // Analyzed indicator
+                        if photo.isAnalyzed {
+                            Image(systemName: "brain.head.profile")
+                                .foregroundColor(.blue)
+                                .background(Circle().fill(Color.white))
+                                .font(.caption)
+                                .padding(6)
+                        }
+                    }
                 }
+                Spacer()
             }
         }
         .onAppear {

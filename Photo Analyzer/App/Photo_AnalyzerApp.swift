@@ -13,6 +13,9 @@ struct Photo_AnalyzerApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Photo.self,
+            Label.self,
+            Profile.self,
+            ClassificationResult.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

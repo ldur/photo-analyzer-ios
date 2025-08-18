@@ -10,6 +10,7 @@ import SwiftUI
 struct AnalysisResultsView: View {
     let analysisResult: AnalysisResult
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var simplifiedDetector = SimplifiedObjectDetector()
     
     var body: some View {
         NavigationView {
@@ -18,6 +19,9 @@ struct AnalysisResultsView: View {
                 
                 ScrollView {
                     VStack(spacing: 20) {
+                        // Detection Status
+                        DetectionStatusView(simplifiedDetector: simplifiedDetector)
+                        
                         // Header with confidence and processing time
                         headerSection
                         

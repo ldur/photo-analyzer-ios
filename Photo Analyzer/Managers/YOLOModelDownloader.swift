@@ -7,12 +7,8 @@ class YOLOModelDownloader: ObservableObject {
     @Published var downloadProgress: Double = 0.0
     @Published var availableModels: [YOLOModelInfo] = []
     
-    // YOLO model URLs (you can replace these with actual model URLs)
+    // YOLO model URLs (only YOLOv8x is supported)
     private let modelURLs: [String: String] = [
-        "YOLOv8n": "https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt",
-        "YOLOv8s": "https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8s.pt",
-        "YOLOv8m": "https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8m.pt",
-        "YOLOv8l": "https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8l.pt",
         "YOLOv8x": "https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8x.pt"
     ]
     
@@ -34,48 +30,8 @@ class YOLOModelDownloader: ObservableObject {
     private func loadAvailableModels() {
         availableModels = [
             YOLOModelInfo(
-                name: "YOLOv8n",
-                description: "Nano model - Fastest, smallest size",
-                size: "~6MB",
-                accuracy: "37.3% mAP",
-                speed: "8.7ms",
-                url: modelURLs["YOLOv8n"] ?? "",
-                isDownloaded: isModelDownloaded("YOLOv8n"),
-                isConverted: isModelConverted("YOLOv8n")
-            ),
-            YOLOModelInfo(
-                name: "YOLOv8s",
-                description: "Small model - Good balance of speed and accuracy",
-                size: "~22MB",
-                accuracy: "44.9% mAP",
-                speed: "12.9ms",
-                url: modelURLs["YOLOv8s"] ?? "",
-                isDownloaded: isModelDownloaded("YOLOv8s"),
-                isConverted: isModelConverted("YOLOv8s")
-            ),
-            YOLOModelInfo(
-                name: "YOLOv8m",
-                description: "Medium model - Higher accuracy",
-                size: "~52MB",
-                accuracy: "50.2% mAP",
-                speed: "23.4ms",
-                url: modelURLs["YOLOv8m"] ?? "",
-                isDownloaded: isModelDownloaded("YOLOv8m"),
-                isConverted: isModelConverted("YOLOv8m")
-            ),
-            YOLOModelInfo(
-                name: "YOLOv8l",
-                description: "Large model - Very high accuracy",
-                size: "~87MB",
-                accuracy: "52.9% mAP",
-                speed: "39.5ms",
-                url: modelURLs["YOLOv8l"] ?? "",
-                isDownloaded: isModelDownloaded("YOLOv8l"),
-                isConverted: isModelConverted("YOLOv8l")
-            ),
-            YOLOModelInfo(
                 name: "YOLOv8x",
-                description: "Extra large model - Highest accuracy",
+                description: "Extra large model - Optimized for postal package detection",
                 size: "~136MB",
                 accuracy: "53.9% mAP",
                 speed: "55.4ms",
