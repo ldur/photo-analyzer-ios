@@ -2,7 +2,7 @@
 //  Label.swift
 //  Photo Analyzer
 //
-//  Label model for photo labeling and training data
+//  Label model for photo labeling and training data - lasse
 //
 
 import Foundation
